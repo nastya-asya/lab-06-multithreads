@@ -29,31 +29,57 @@ string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
-add_library(${PROJECT_NAME} STATIC
-  # enum your files and delete this comment
-  ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
+hunter_add_package(Boost COMPONENTS filesystem log system thread)
+find_package(Boost CONFIG REQUIRED filesystem log log_setup system thread)
+
+hunter_add_package(Boost COMPONENTS log thread system)
+find_package(Boost CONFIG REQUIRED log thread system)
+
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json CONFIG REQUIRED)
+
+add_library(template STATIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/sources/hash.cpp
 )
 
-add_executable(demo
-  ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp
+add_executable(tests
+        ${CMAKE_CURRENT_SOURCE_DIR}/sources/source.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include>"
+target_include_directories(template
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/PicoSHA2
 )
+target_include_directories(tests
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/PicoSHA2
+        )
+target_link_libraries(template
+        Boost::log_setup
+        Boost::log
+        Boost::thread
+        Boost::filesystem
+        Boost::system
+        nlohmann_json::nlohmann_json)
 
-target_link_libraries(demo ${PROJECT_NAME})
+target_link_libraries(
+        tests
+        template
+        GTest::gtest_main
+)
+enable_testing()
+add_test(NAME unit_tests COMMAND tests)
 
-if(BUILD_TESTS)
-  add_executable(tests
-    # TODO: enum your files and delete this comment
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
-  )
-  target_link_libraries(tests ${PROJECT_NAME} GTest::gtest_main)
-  enable_testing()
-  add_test(NAME unit_tests COMMAND tests)
-endif()
+#if(BUILD_TESTS)
+#  add_executable(tests
+#    # TODO: enum your files and delete this comment
+#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
+#  )
+#  target_link_libraries(tests ${PROJECT_NAME} GTest::gtest_main)
+#  enable_testing()
+#  add_test(NAME unit_tests COMMAND tests)
+#endif()
 
 if(BUILD_COVERAGE)
   set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
@@ -77,17 +103,17 @@ endif()
 
 include(CPackConfig.cmake)
 
-install(TARGETS ${PROJECT_NAME} demo
-  EXPORT "${PROJECT_NAME}-targets"
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  INCLUDES DESTINATION include
-)
+#install(TARGETS ${PROJECT_NAME} demo
+#  EXPORT "${PROJECT_NAME}-targets"
+#  RUNTIME DESTINATION bin
+#  ARCHIVE DESTINATION lib
+#  LIBRARY DESTINATION lib
+#  INCLUDES DESTINATION include
+#)
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-
-install(EXPORT "${PROJECT_NAME}-targets"
-  NAMESPACE "${PROJECT_NAME}::"
-  DESTINATION "lib/cmake"
-)
+#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+#
+#install(EXPORT "${PROJECT_NAME}-targets"
+#  NAMESPACE "${PROJECT_NAME}::"
+#  DESTINATION "lib/cmake"
+#)
