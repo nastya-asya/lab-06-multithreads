@@ -1,7 +1,6 @@
 // Copyright 2020 Anastasiya Smirnova nastya.asya08@yandex.ru
 
 #include <picosha2.h>
-
 #include <hash.hpp>
 #include <atomic>
 #include <csignal>
