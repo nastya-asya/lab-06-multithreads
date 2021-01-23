@@ -71,16 +71,6 @@ target_link_libraries(
 enable_testing()
 add_test(NAME unit_tests COMMAND tests)
 
-#if(BUILD_TESTS)
-#  add_executable(tests
-#    # TODO: enum your files and delete this comment
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp
-#  )
-#  target_link_libraries(tests ${PROJECT_NAME} GTest::gtest_main)
-#  enable_testing()
-#  add_test(NAME unit_tests COMMAND tests)
-#endif()
-
 if(BUILD_COVERAGE)
   set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/tools/coverage/cmake")
@@ -103,17 +93,4 @@ endif()
 
 include(CPackConfig.cmake)
 
-#install(TARGETS ${PROJECT_NAME} demo
-#  EXPORT "${PROJECT_NAME}-targets"
-#  RUNTIME DESTINATION bin
-#  ARCHIVE DESTINATION lib
-#  LIBRARY DESTINATION lib
-#  INCLUDES DESTINATION include
-#)
 
-#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-#
-#install(EXPORT "${PROJECT_NAME}-targets"
-#  NAMESPACE "${PROJECT_NAME}::"
-#  DESTINATION "lib/cmake"
-#)

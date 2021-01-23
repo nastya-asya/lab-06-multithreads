@@ -82,12 +82,4 @@ void StartProcess(const int& argc, char **argv){
         fout << json_obj;
     }
 }
-// int main(int argc, char* argv[]) {
-//   StartProcess(argc,argv);
-//   return 0;
-// }
-//int main()
-//{
-//    std::cout<<std::thread::hardware_concurrency();
-//    return 0;
-//}
+
